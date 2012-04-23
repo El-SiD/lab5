@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 import javax.swing.JOptionPane;
 
 	public class lab5 
@@ -7,44 +8,64 @@ import javax.swing.JOptionPane;
 		{
 			try
 			{
-				RandomAccessFile file = new RandomAccessFile(new File("file.txt"), "rw");
-				String tmp = "";
-				long NumberOfStrings = 20, Length = 5; 
+				RandomAccessFile File = new RandomAccessFile(new File("File.txt"), "rw");
+				String Tmp = "";
+				long NumberOfStrings = 20, Length = 5; // 4GB = 536870912 UTF-8 Chars (example 33554432 strings by 16 chars)
 				for (int i = 0; i < NumberOfStrings; i++)
 				{
 					for (int j = 0; j < Length; j++)
-						tmp += (char)(26 * Math.random() + 64);
-					tmp += "\n";
-					file.writeUTF(tmp);
-					tmp = "";
+						Tmp += (char)(26 * Math.random() + 64);
+					Tmp += "\n";
+					File.writeUTF(Tmp);
+					Tmp = "";
 				}
 				JOptionPane.showMessageDialog(null, "Заполнение завершено.");
-				long time = System.currentTimeMillis();
-				String tmp1 = "";
-				String tmp2 = "";
-				for (int i = 0; i < NumberOfStrings; i++)
-					for (int j = i; j < NumberOfStrings - 1; j++)
-					{
-						file.seek(j);
-						tmp1 = file.readLine();
-						file.seek(j + 1);
-						tmp2 = file.readLine();
-						if (tmp1.compareTo(tmp2) < 0)
-						{
-							file.seek(j);
-							file.writeUTF(tmp2);
-							file.seek(j + 1);
-							file.writeUTF(tmp1);
-						}
+				long Time = System.currentTimeMillis();
+				int BufferSize = 1024; // in chars
+				List<String> Part = new LinkedList<String>();
+				Tmp = File.readLine();
+				int PartNumber = 0;
+				do
+				{
+					Part.add(Tmp);
+					if (Part.size() * Length > BufferSize) 
+					{	
+						Collections.sort(Part);
+						WritePart(Part, "" + PartNumber);
+						Part.clear();
+						PartNumber++;
 					}
-				time = System.currentTimeMillis() - time;
-				JOptionPane.showMessageDialog(null, "Сортировка завершена. Время: " + time);
+					Tmp = File.readLine();
+				}
+				while (Tmp != null);
+				for (int i = 0; i < PartNumber; i++)
+				{
+					Merge("Output.txt", PartNumber + ".txt");
+				}
+				Time = System.currentTimeMillis() - Time;
+				JOptionPane.showMessageDialog(null, "Сортировка завершена. Время: " + Time);
 				
 			}
 			catch(Exception e)
 			{
-				JOptionPane.showMessageDialog(null, e.toString());
+			/*	JOptionPane.showMessageDialog(null, e.toString());
 				e.printStackTrace(); 
+			*/
 			}
+		}
+		static void WritePart(List<String> Part, String i)
+		{
+			File file;
+			try
+			{
+				if (i == "0") file = File.createTempFile("Output", "txt");
+				else file = File.createTempFile(i, "txt");
+				
+			}
+			catch (Exception e) {}
+		}
+		static void Merge(String output, String input)
+		{
+			
 		}
 	}
