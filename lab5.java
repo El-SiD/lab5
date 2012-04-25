@@ -21,14 +21,14 @@ import javax.swing.JOptionPane;
 				}
 				JOptionPane.showMessageDialog(null, "Заполнение завершено.");
 				long Time = System.currentTimeMillis();
-				int BufferSize = 1024; // in chars
+				int BufferSize = 550; // in strings
 				List<String> Part = new LinkedList<String>();
 				Tmp = File.readLine();
 				int PartNumber = 0;
 				do
 				{
 					Part.add(Tmp);
-					if (Part.size() * Length > BufferSize) 
+					if (Part.size() >= BufferSize) 
 					{	
 						Collections.sort(Part);
 						WritePart(Part, "" + PartNumber);
@@ -38,9 +38,9 @@ import javax.swing.JOptionPane;
 					Tmp = File.readLine();
 				}
 				while (Tmp != null);
-				for (int i = 0; i < PartNumber; i++)
+				for (int i = 0; i < PartNumber - 1; i++)
 				{
-					Merge("Output.txt", PartNumber + ".txt");
+					Merge(i + ".txt", i + 1 + ".txt", PartNumber + i + ".txt");
 				}
 				Time = System.currentTimeMillis() - Time;
 				JOptionPane.showMessageDialog(null, "Сортировка завершена. Время: " + Time);
@@ -59,28 +59,44 @@ import javax.swing.JOptionPane;
 			if (i == "0") file = File.createTempFile("Output", "txt");
 			else file = File.createTempFile(i, "txt");
 		}
-		static void Merge(String output, String input) throws IOException
+		static void Merge(String input1, String input2, String output) throws IOException
 		{
-			RandomAccessFile File1 = new RandomAccessFile(new File(output), "rw");
-			RandomAccessFile File2 = new RandomAccessFile(new File(input), "rw");
-			for (long i = 0; i < File2.length(); i++)
+			FileReader file_in1 = new FileReader(input1);
+			BufferedReader reader1 = new BufferedReader(file_in1);
+			FileReader file_in2 = new FileReader(input2);
+			BufferedReader reader2 = new BufferedReader(file_in2);
+			FileWriter file_out = new FileWriter(output);
+			BufferedWriter writer = new BufferedWriter(file_out);
+			String m1, m2;
+			m1 = reader1.readLine();
+			m2 = reader2.readLine();
+			do
 			{
-				String Tmp = "";
-				Tmp = File2.readLine();
-				for (long j = 0; j < File1.length(); j++)
+				if (m1.compareTo(m2) <= 0)
 				{
-					File2.seek(j);
-					if (File1.readLine().compareTo(Tmp) < 0) 
-					{
-						File1.writeUTF(Tmp);
-						Tmp = "";
-					}
-					if (Tmp != "")  
-					{
-						File1.seek(File1.length());
-						File1.writeUTF(Tmp);
-					}
+					writer.write(m1 + "/n");
+					writer.write(m2 + "/n");
+					
 				}
+				else
+				{
+					writer.write(m2 + "/n");
+					writer.write(m1 + "/n");
+				}
+				m1 = reader1.readLine();
+				m2 = reader2.readLine();
 			}
+			while (m2 != null);
+			if (m1 != null)
+			do
+			{
+				
+				writer.write(m1 + "/n");
+				m1 = reader1.readLine();
+			}
+			while (m1 != null);
+			reader1.close();
+			reader2.close();
+			writer.close();
 		}
 	}
