@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 		{
 			try
 			{
+				Merge("1.txt", "2.txt", "3.txt");
 				RandomAccessFile File = new RandomAccessFile(new File("File.txt"), "rw");
 				String Tmp = "";
 				long NumberOfStrings = 20, Length = 5; // 4GB = 536870912 UTF-8 Chars (example 33554432 strings by 16 chars)
@@ -74,14 +75,14 @@ import javax.swing.JOptionPane;
 			{
 				if (m1.compareTo(m2) <= 0)
 				{
-					writer.write(m1 + "/n");
-					writer.write(m2 + "/n");
+					writer.write(m1 + "\n");
+					writer.write(m2 + "\n");
 					
 				}
 				else
 				{
-					writer.write(m2 + "/n");
-					writer.write(m1 + "/n");
+					writer.write(m2 + "\n");
+					writer.write(m1 + "\n");
 				}
 				m1 = reader1.readLine();
 				m2 = reader2.readLine();
@@ -91,7 +92,7 @@ import javax.swing.JOptionPane;
 			do
 			{
 				
-				writer.write(m1 + "/n");
+				writer.write(m1 + "\n");
 				m1 = reader1.readLine();
 			}
 			while (m1 != null);
