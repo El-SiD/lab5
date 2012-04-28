@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+
 import javax.swing.JOptionPane;
 
 	public class lab5 
@@ -32,7 +33,6 @@ import javax.swing.JOptionPane;
 					if (Part.size() >= BufferSize) 
 					{	
 						Collections.sort(Part);
-						WritePart(Part, "" + PartNumber);
 						Part.clear();
 						PartNumber++;
 					}
@@ -54,12 +54,6 @@ import javax.swing.JOptionPane;
 			*/
 			}
 		}
-		static void WritePart(List<String> Part, String i) throws IOException
-		{
-			File file;
-			if (i == "0") file = File.createTempFile("Output", "txt");
-			else file = File.createTempFile(i, "txt");
-		}
 		static void Merge(String input1, String input2, String output) throws IOException
 		{
 			FileReader file_in1 = new FileReader(input1);
@@ -69,33 +63,39 @@ import javax.swing.JOptionPane;
 			FileWriter file_out = new FileWriter(output);
 			BufferedWriter writer = new BufferedWriter(file_out);
 			String m1, m2;
+			List<String> Part = new LinkedList<String>();
 			m1 = reader1.readLine();
 			m2 = reader2.readLine();
 			do
 			{
-				if (m1.compareTo(m2) <= 0)
-				{
-					writer.write(m1 + "\n");
-					writer.write(m2 + "\n");
-					
-				}
-				else
-				{
-					writer.write(m2 + "\n");
-					writer.write(m1 + "\n");
-				}
-				m1 = reader1.readLine();
+				Part.add(m2);
 				m2 = reader2.readLine();
 			}
 			while (m2 != null);
-			if (m1 != null)
 			do
 			{
-				
-				writer.write(m1 + "\n");
-				m1 = reader1.readLine();
+				if (Part.size() == 0 || m1.compareTo(Part.get(0)) <= 0)
+				{
+					writer.write(m1 + "\n");
+					m1 = reader1.readLine();
+				}
+				else
+				{
+					writer.write(Part.get(0) + "\n");
+					Part.remove(0);
+					writer.write(m1 + "\n");
+					m1 = reader1.readLine();
+				}
 			}
 			while (m1 != null);
+			for (;;)
+				if (Part.size() != 0)
+				{	
+					writer.write(Part.get(0) + "\n");
+					Part.remove(0);
+				}
+				else break;
+			Part.clear();
 			reader1.close();
 			reader2.close();
 			writer.close();
